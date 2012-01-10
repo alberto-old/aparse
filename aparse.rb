@@ -21,7 +21,7 @@ class Applicant
   end
 
   def parse_value(line, field)  	  
-  	return line.gsub(field,"").lstrip
+  	return line.gsub(field,"").lstrip.chomp
   end
 
   def print
@@ -31,8 +31,18 @@ class Applicant
   	puts @urls
   end
 
+  def generate_json    
+    url_array = @urls.split("|").map {|url| url.lstrip.rstrip}
+
+    @json = JSON.generate [ {"name" => @name}, 
+                            {"email" => @email}, 
+                            {"about" => @about}, 
+                            {"urls" => url_array}]
+  end
+
 end
 
 
 applicant = Applicant.new "aparse.cfg"
 applicant.print
+applicant.generate_json
