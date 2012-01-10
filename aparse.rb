@@ -5,14 +5,11 @@ class Applicant
   def initialize config_file
     if File.exist?(config_file)
       lines = IO.readlines(config_file)
-      lines.each do |line|
-	    parse_line(line)  	
-	  end	
+      lines.each { |line| parse_line(line) }      
     else
       puts "Config file " + config_file + " not found!"
+    end
 	end
-
-  end
 
   def parse_line line    
     @name = parse_value(line,"name:") if line.start_with?("name:")
@@ -31,6 +28,7 @@ class Applicant
   	puts @about
   	puts @urls
   end
+
 end
 
 
