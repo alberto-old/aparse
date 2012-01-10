@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 
+require 'json'
+
 class Applicant
 
   def initialize config_file
