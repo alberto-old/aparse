@@ -41,9 +41,34 @@ class Applicant
                             {"urls" => url_array}]
   end
 
+  def apply 
+    # uri = URI('https://www.parse.com/jobs/apply')
+    uri = URI('http://webhookapp.com/981496484418057223')
+    request = Net::HTTP::Post.new(uri.path)
+    request["content-type"] = "application/json"
+    request.body = @json
+    # post(request)
+    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(request)
+    end
+
+    case response
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        puts "You've applied to Parse!"
+      else
+        puts response.value
+    end
+
+  end
+
+
+  def post request
+  end
+
 end
 
 
 applicant = Applicant.new "aparse.cfg"
 applicant.print
 applicant.generate_json
+applicant.apply
