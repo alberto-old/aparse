@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 
 require 'json'
+require 'net/http'
 
 class Applicant
 
