@@ -4,50 +4,80 @@ require 'json'
 require 'net/http'
 
 class Applicant
+  
+  # initialize an empty applicant as a Hash
+  def init_empty_applicant
 
-  def initialize config_file
+    @applicant_values = Hash.new
+    @applicant_fields = %w{name email about urls}    
+    @applicant_fields.each { |field| @applicant_values[field] = nil }
+  
+  end
+
+  # create applicant from config_file data which 
+  # contains one line for each of the required fields
+  # name, email, about, urls
+  def initialize config_file          
+    init_empty_applicant
+              
     if File.exist?(config_file)
       lines = IO.readlines(config_file)
       lines.each { |line| parse_line(line) }      
     else
       puts "Config file " + config_file + " not found!"
     end
+
+    # trasform urls string to an array of strings
+    unless @applicant_values["urls"].nil?
+      @applicant_values["urls"] = @applicant_values["urls"].split("|").map {|url| url.lstrip.rstrip}
+    end
 	end
 
+  # parse a line to fill applicant fields
   def parse_line line    
-    @name = parse_value(line,"name:") if line.start_with?("name:")
-    @email = parse_value(line,"email:") if line.start_with?("email:")
-    @about = parse_value(line,"about:") if line.start_with?("about:")
-    @urls = parse_value(line,"urls:") if line.start_with?("urls:")   	  
+    @applicant_fields.each do |field|
+      @applicant_values[field] = parse_value(line, field + ":") if line.start_with?(field + ":")
+    end  
   end
 
+  # parse a line for a specific field (name, email, about, url)
   def parse_value(line, field)  	  
   	return line.gsub(field,"").lstrip.chomp
   end
 
+  # print Applicant data
   def print
-  	puts @name
-  	puts @email
-  	puts @about
-  	puts @urls
+    puts @applicant_values
   end
 
+  # generate JSON from Applicant object
   def generate_json    
-    url_array = @urls.split("|").map {|url| url.lstrip.rstrip}
-
-    @json = JSON.generate [ {"name" => @name}, 
-                            {"email" => @email}, 
-                            {"about" => @about}, 
-                            {"urls" => url_array}]
+    return JSON.generate @applicant_values
   end
 
-  def apply 
-    # uri = URI('https://www.parse.com/jobs/apply')
-    uri = URI('http://webhookapp.com/981496484418057223')
-    request = Net::HTTP::Post.new(uri.path)
-    request["content-type"] = "application/json"
-    request.body = @json
-    # post(request)
+  def apply url    
+    #check that no information is missing
+    valid_application = true
+
+    @applicant_fields.each do |field|
+      valid_application = valid_application && (not @applicant_values[field].nil?)
+    end
+    
+    if valid_application 
+      #create request
+      uri = URI(url)        
+      request = Net::HTTP::Post.new(uri.path)
+      request["content-type"] = "application/json"
+      request.body = generate_json
+    
+      # post request
+      post_request(uri,request)
+    else
+      puts "Invalid applicant data"
+    end
+  end
+
+  def post_request(uri, request)
     response = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(request)
     end
@@ -58,17 +88,11 @@ class Applicant
       else
         puts response.value
     end
-
-  end
-
-
-  def post request
   end
 
 end
 
-
 applicant = Applicant.new "aparse.cfg"
-applicant.print
-applicant.generate_json
-applicant.apply
+applicant.apply "http://webhookapp.com/981496484418057223"
+# uri = URI('https://www.parse.com/jobs/apply')
+
