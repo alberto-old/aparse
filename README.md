@@ -3,10 +3,10 @@ Parse (http://parse.com) is hiring and just for the sake of the exercise I've im
 1. Download aparse.rb and aparse.cfg
 2. Fillout aparse.cfg with your own information (find below an example)
 
-> name:  John Doe
-> email: john.doe@example.com
-> about: Designer and developer interested in search engines, information extraction from unstructured sources and data mining
-> urls:  www.example.com | www.example2.com | www.example3.com
+> name:  John Doe   
+> email: john.doe@example.com   
+> about: Designer and developer interested in search engines, information extraction from unstructured sources and data mining   
+> urls:  www.example.com | www.example2.com | www.example3.com   
 
 3. Execute the program
 
