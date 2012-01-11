@@ -31,6 +31,8 @@ class Applicant
     unless @applicant_values["urls"].nil?
       @applicant_values["urls"] = @applicant_values["urls"].split("|").map {|url| url.lstrip.rstrip}
     end
+
+    puts @applicant_values.to_json
 	end
 
   # parse a line to fill applicant fields
@@ -50,35 +52,36 @@ class Applicant
     puts @applicant_values
   end
 
-  # generate JSON from Applicant object
-  def generate_json    
-    return JSON.generate @applicant_values
-  end
-
-  def apply url    
+  def valid_application?
     #check that no information is missing
-    valid_application = true
+    valid = true
 
     @applicant_fields.each do |field|
       valid_application = valid_application && (not @applicant_values[field].nil?)
     end
     
-    if valid_application 
-      #create request
-      uri = URI(url)        
+    return valid
+  end 
+  
+  def apply url    
+    
+    if valid_application?   
+      #create request      
+      uri = URI(url) 
       request = Net::HTTP::Post.new(uri.path)
       request["content-type"] = "application/json"
-      request.body = generate_json
+      request.body = @applicant_values.to_json
     
       # post request
       post_request(uri,request)
     else
       puts "Invalid applicant data"
     end
+
   end
 
   def post_request(uri, request)
-    response = Net::HTTP.start(uri.hostname, uri.port) do |http|
+    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == 'https') do |http|
       http.request(request)
     end
 
@@ -92,6 +95,6 @@ class Applicant
 
 end
 
-applicant = Applicant.new "aparse.cfg"
+applicant = Applicant.new "alberto.cfg"
 applicant.apply "https://www.parse.com/jobs/apply"
 
