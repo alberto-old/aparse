@@ -93,6 +93,5 @@ class Applicant
 end
 
 applicant = Applicant.new "aparse.cfg"
-applicant.apply "http://webhookapp.com/981496484418057223"
-# uri = URI('https://www.parse.com/jobs/apply')
+applicant.apply "https://www.parse.com/jobs/apply"
 
