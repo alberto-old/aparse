@@ -95,6 +95,6 @@ class Applicant
 
 end
 
-applicant = Applicant.new "alberto.cfg"
+applicant = Applicant.new "aparse.cfg"
 applicant.apply "https://www.parse.com/jobs/apply"
 
