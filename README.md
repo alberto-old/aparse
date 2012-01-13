@@ -13,3 +13,5 @@ Parse (http://parse.com) is hiring and just for the sake of the exercise I've im
          ruby aparse.rb
 
 Enjoy. Please feel free to contact me if you find any problem.
+
+PS: I have implemented an alternative way to apply through a form (http://alberto-villa.com/aparse/apply.html), the project itself is also in github (https://github.com/albertovilla/aparse2)
